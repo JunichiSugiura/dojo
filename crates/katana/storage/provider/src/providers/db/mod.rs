@@ -45,7 +45,7 @@ use crate::traits::transaction::{
     ReceiptProvider, TransactionProvider, TransactionStatusProvider, TransactionsProviderExt,
 };
 
-/// A provider implementation that uses a database as a backend.
+/// A provider implementation that uses a persistent database as the backend.
 #[derive(Debug)]
 pub struct DbProvider(DbEnv);
 
@@ -103,6 +103,7 @@ impl BlockHashProvider for DbProvider {
         let db_tx = self.0.tx()?;
         let total_blocks = db_tx.entries::<BlockNumbers>()? as u64;
         let latest_block = if total_blocks == 0 { 0 } else { total_blocks - 1 };
+        println!("latest_block: {}", latest_block);
         let latest_hash = db_tx.get::<BlockHashes>(latest_block)?.expect("block hash should exist");
         db_tx.commit()?;
         Ok(latest_hash)

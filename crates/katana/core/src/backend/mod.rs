@@ -102,6 +102,9 @@ impl Backend {
                 },
             )
             .expect("able to create forked blockchain")
+        } else if let Some(db_path) = &config.db_dir {
+            Blockchain::new_with_db(db_path, &block_context)
+                .expect("able to create blockchain from db")
         } else {
             Blockchain::new_with_genesis(InMemoryProvider::new(), &block_context)
                 .expect("able to create blockchain from genesis block")

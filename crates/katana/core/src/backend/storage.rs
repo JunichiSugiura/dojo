@@ -1,11 +1,16 @@
+use std::path::Path;
+
 use anyhow::Result;
 use blockifier::block_context::BlockContext;
+use katana_db::init_db;
+use katana_db::utils::is_database_empty;
 use katana_primitives::block::{
     Block, BlockHash, FinalityStatus, GasPrices, Header, PartialHeader, SealedBlockWithStatus,
 };
 use katana_primitives::state::StateUpdatesWithDeclaredClasses;
 use katana_primitives::version::CURRENT_STARKNET_VERSION;
 use katana_primitives::FieldElement;
+use katana_provider::providers::db::DbProvider;
 use katana_provider::traits::block::{BlockProvider, BlockWriter};
 use katana_provider::traits::contract::ContractClassWriter;
 use katana_provider::traits::state::{StateFactoryProvider, StateRootProvider, StateWriter};
@@ -85,6 +90,15 @@ impl Blockchain {
         };
 
         Self::new_with_block_and_state(provider, block, get_genesis_states_for_testing())
+    }
+
+    pub fn new_with_db(db_path: impl AsRef<Path>, block_context: &BlockContext) -> Result<Self> {
+        if is_database_empty(&db_path) {
+            let provider = DbProvider::new(init_db(db_path)?);
+            Ok(Self::new_with_genesis(provider, block_context)?)
+        } else {
+            Ok(Self::new(DbProvider::new(init_db(db_path)?)))
+        }
     }
 
     // TODO: make this function to just accept a `Header` created from the forked block.

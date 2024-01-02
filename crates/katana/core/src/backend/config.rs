@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use blockifier::block_context::{BlockContext, FeeTokenAddresses, GasPrices};
 use starknet_api::block::{BlockNumber, BlockTimestamp};
 use starknet_api::core::ChainId;
@@ -17,6 +19,7 @@ pub struct StarknetConfig {
     pub env: Environment,
     pub fork_rpc_url: Option<Url>,
     pub fork_block_number: Option<u64>,
+    pub db_dir: Option<PathBuf>,
 }
 
 impl StarknetConfig {
@@ -59,6 +62,7 @@ impl Default for StarknetConfig {
             fork_rpc_url: None,
             fork_block_number: None,
             env: Environment::default(),
+            db_dir: None,
         }
     }
 }
