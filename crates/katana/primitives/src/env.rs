@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use crate::block::{BlockNumber, GasPrices};
 use crate::chain::ChainId;
 use crate::contract::ContractAddress;
 
@@ -7,11 +8,11 @@ use crate::contract::ContractAddress;
 #[derive(Debug, Clone)]
 pub struct BlockEnv {
     /// The block height.
-    pub number: u64,
+    pub number: BlockNumber,
     /// The timestamp in seconds since the UNIX epoch.
     pub timestamp: u64,
-    /// The block gas price in wei.
-    pub gas_price: u128,
+    /// The L1 gas prices at this particular block.
+    pub gas_prices: GasPrices,
     /// The contract address of the sequencer.
     pub sequencer_address: ContractAddress,
     /// The contract address of the fee token.
