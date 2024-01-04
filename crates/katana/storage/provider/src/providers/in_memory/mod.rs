@@ -13,7 +13,7 @@ use katana_primitives::block::{
 use katana_primitives::contract::{
     ClassHash, CompiledClassHash, CompiledContractClass, ContractAddress, FlattenedSierraClass,
 };
-use katana_primitives::env::{BlockEnv, CfgEnv};
+use katana_primitives::env::BlockEnv;
 use katana_primitives::receipt::Receipt;
 use katana_primitives::state::{StateUpdates, StateUpdatesWithDeclaredClasses};
 use katana_primitives::transaction::{Tx, TxHash, TxNumber, TxWithHash};
@@ -492,15 +492,11 @@ impl StateWriter for InMemoryProvider {
 
 impl BlockEnvProvider for InMemoryProvider {
     fn block_env_at(&self, block_id: BlockHashOrNumber) -> Result<Option<BlockEnv>> {
-        if let Some(header) = self.header(block_id)? {
-            Ok(Some(BlockEnv {
-                number: header.number,
-                timestamp: header.timestamp,
-                gas_prices: header.gas_prices,
-                sequencer_address: header.sequencer_address,
-            }))
-        } else {
-            Ok(None)
-        }
+        Ok(self.header(block_id)?.map(|header| BlockEnv {
+            number: header.number,
+            timestamp: header.timestamp,
+            gas_prices: header.gas_prices,
+            sequencer_address: header.sequencer_address,
+        }))
     }
 }
