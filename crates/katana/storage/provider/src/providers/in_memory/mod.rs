@@ -491,11 +491,16 @@ impl StateWriter for InMemoryProvider {
 }
 
 impl BlockEnvProvider for InMemoryProvider {
-    fn env_at(&self, block_id: BlockHashOrNumber) -> Result<BlockEnv> {
-        todo!()
-    }
-
-    fn exec_env_at(&self, block_id: BlockHashOrNumber) -> Result<(BlockEnv, CfgEnv)> {
-        todo!()
+    fn block_env_at(&self, block_id: BlockHashOrNumber) -> Result<Option<BlockEnv>> {
+        if let Some(header) = self.header(block_id)? {
+            Ok(Some(BlockEnv {
+                number: header.number,
+                timestamp: header.timestamp,
+                gas_prices: header.gas_prices,
+                sequencer_address: header.sequencer_address,
+            }))
+        } else {
+            Ok(None)
+        }
     }
 }
